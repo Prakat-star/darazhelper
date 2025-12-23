@@ -3,7 +3,6 @@ import json
 
 PRODUCTS = []
 
-
 def parse_products(mtop_json):
     results = []
 
@@ -17,7 +16,6 @@ def parse_products(mtop_json):
 
     for item in items:
 
-      
         if item.get("isAd") == "1":
             continue
 
@@ -56,7 +54,6 @@ def parse_products(mtop_json):
 
     return results
 
-
 def scrape_rated_products():
     global PRODUCTS
     PRODUCTS = []
@@ -86,3 +83,4 @@ def scrape_rated_products():
 if __name__ == "__main__":
     products = scrape_rated_products()
     print(json.dumps(products, indent=2, ensure_ascii=False))
+
