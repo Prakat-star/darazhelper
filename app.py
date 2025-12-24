@@ -3,6 +3,7 @@ from main import scrape_rated_products
 
 app = Flask(__name__)
 
+
 @app.route("/")
 def home():
     products = scrape_rated_products()
@@ -11,7 +12,7 @@ def home():
     <!DOCTYPE html>
     <html>
     <head>
-        <title>Daraz 4 or more⭐ Products</title>
+        <title>Daraz 4⭐+ Products</title>
         <style>
             :root {
                 --bg: #f5f5f5;
@@ -28,11 +29,10 @@ def home():
             }
 
             body {
-                margin: 0;
-                padding: 20px;
-                font-family: Arial, sans-serif;
                 background: var(--bg);
                 color: var(--text);
+                font-family: Arial, sans-serif;
+                padding: 20px;
                 transition: 0.3s;
             }
 
@@ -41,11 +41,9 @@ def home():
             }
 
             .top-bar {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
                 max-width: 900px;
                 margin: auto;
+                display: flex;
                 gap: 10px;
             }
 
@@ -54,16 +52,15 @@ def home():
                 padding: 8px;
                 border-radius: 5px;
                 border: none;
-                outline: none;
             }
 
             button {
                 padding: 8px 12px;
-                border: none;
                 border-radius: 5px;
-                cursor: pointer;
+                border: none;
                 background: var(--accent);
                 color: white;
+                cursor: pointer;
             }
 
             .product-grid {
@@ -77,35 +74,50 @@ def home():
                 background: var(--card);
                 border-radius: 8px;
                 padding: 15px;
-                box-shadow: 0 2px 6px rgba(0,0,0,0.2);
                 text-align: center;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.2);
             }
 
-            .product-card img {
+            /* PRICE STATUS */
+            .product-card.down {
+                border: 2px solid #2ecc71;
+                background: #eafaf1;
+            }
+
+            .product-card.up {
+                border: 2px solid #e74c3c;
+                background: #fdecea;
+            }
+
+            body.dark .product-card.down {
+                background: #123d2a;
+            }
+
+            body.dark .product-card.up {
+                background: #3d1c1c;
+            }
+
+            img {
                 width: 100%;
                 height: 180px;
                 object-fit: contain;
-                margin-bottom: 10px;
             }
 
-            /* 🔥 Scrollable title */
             .product-title {
                 font-size: 14px;
                 font-weight: bold;
                 height: 40px;
                 overflow-y: auto;
-                scrollbar-width: thin;
-                margin-bottom: 8px;
+                margin: 8px 0;
             }
 
             .price {
-                color: var(--accent);
                 font-weight: bold;
+                color: var(--accent);
             }
 
             .rating {
                 color: gold;
-                margin: 5px 0;
             }
 
             a {
@@ -122,22 +134,22 @@ def home():
     </head>
     <body>
 
-        <h1>⭐ 4-Star or more Rated Products</h1>
+        <h1>⭐ 4-Star or Higher Products</h1>
 
         <div class="top-bar">
-            <input type="text" id="search" placeholder="Search product..." onkeyup="searchProducts()">
+            <input id="search" placeholder="Search..." onkeyup="searchProducts()">
             <button onclick="toggleDark()">🌙</button>
         </div>
 
-        <div class="product-grid" id="productGrid">
+        <div class="product-grid">
             {% for p in products %}
-                <div class="product-card" data-title="{{ p.title | lower }}">
-                    <img src="{{ p.image_url }}">
-                    <div class="product-title">{{ p.title }}</div>
-                    <div class="price">{{ p.price }} {{ p.currency }}</div>
-                    <div class="rating">⭐ {{ p.rating }} ({{ p.review_count }})</div>
-                    <a href="{{ p.product_url }}" target="_blank">View</a>
-                </div>
+            <div class="product-card {{ p.price_status }}" data-title="{{ p.title | lower }}">
+                <img src="{{ p.image_url }}">
+                <div class="product-title">{{ p.title }}</div>
+                <div class="price">{{ p.price }} {{ p.currency }}</div>
+                <div class="rating">⭐ {{ p.rating }} ({{ p.review_count }})</div>
+                <a href="{{ p.product_url }}" target="_blank">View</a>
+            </div>
             {% endfor %}
         </div>
 
@@ -148,11 +160,8 @@ def home():
 
             function searchProducts() {
                 let value = document.getElementById("search").value.toLowerCase();
-                let cards = document.querySelectorAll(".product-card");
-
-                cards.forEach(card => {
-                    let title = card.dataset.title;
-                    card.style.display = title.includes(value) ? "block" : "none";
+                document.querySelectorAll(".product-card").forEach(card => {
+                    card.style.display = card.dataset.title.includes(value) ? "block" : "none";
                 });
             }
         </script>
